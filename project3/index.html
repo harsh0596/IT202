@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Jumbotron Template for Bootstrap</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  
+    <style>
+      .screen {display:none;}
+      #map {
+        height: 600px;
+        width: 100%;
+       }
+    </style>
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#screen1">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#screen2">Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#screen3">Map</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container screen" id="screen1">
+        <h1 class="display-3">Chicago Food Inspection Search</h1>
+        <br>
+        
+        <div class="form-group">
+          <label for="idate">Inspection Date</label>
+          <input type="date" class="form-control" id="idate">
+        </div>
+        <div class="form-group">
+          <label for="ftype">Faculty Type</label>
+          <input type="text" class="form-control" id="ftype">
+        </div>
+        <div class="form-group">
+          <label for="iresult">Inspection Result</label>
+          <input type="text" class="form-control" id="iresult">
+        </div>
+        <div class="form-group">
+          <label for="zip">Zip</label>
+          <input type="text" class="form-control" id="zip">
+        </div>
+        
+        <button type="submit" id="submitb" class="btn btn-primary" href="#screen2">Search <i class="fa fa-search" aria-hidden="true"></i></button>
+        
+      </div>
+      
+      <div class="container screen" id="screen2">
+        <h2 id="numresults"></h2>
+        <div class="container" id="results"></div>
+      </div>
+      
+      <div class="container screen" id="screen3">
+
+        <div id="map"></div>
+      </div>
+    </div> <!-- /jumbotron -->
+    
+    <script>
+      var map;
+      function initMap() {
+         map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 11,
+          center: {lat: 41.763869, lng: -87.686745}
+        });
+      }
+      
+      
+        
+      $("#screen1").show();
+    
+      $(document).ready(function() {
+        function search() {
+          let date = $("#idate").val();
+          let ftype = $("#ftype").val();
+          let iresult = $("#iresult").val();
+          let zip = $("#zip").val();
+          
+          let apiUrl = "https://data.cityofchicago.org/resource/cwig-ma7x.json";
+          
+          let myParam = {};
+          
+          if (date.length != 0) {
+            myParam.inspection_date = date;
+          }
+          
+          if (ftype.length != 0) {
+            myParam.faculty_type = ftype;
+          }
+          
+          if (iresult.length != 0) {
+            myParam.results = iresult;
+          }
+          
+          if (zip.length != 0) {
+            myParam.zip = zip;
+          }
+          
+          let url2 = apiUrl + '?' + $.param(myParam);
+          
+          $.get(url2, function(response) {
+              $("#numresults").text('Results Returned: ' + response.length);
+              
+              $.each(response, function(i,v) {
+                $("#results").append('<div class="card"><div class="card-block"><h4 class="card-title">' + v.inspection_id + '</h4><h6 class="card-subtitle mb-2 text-muted">' + v.results + '</h6><p class="card-text">' + '<b>DBA Name: </b>' + v.dba_name + '<br><b>AKA Name: </b>' + v.aka_name + '<br><b>Address: </b>' + v.address + '<br><b>Inspection Date: </b>' + v.inspection_date + '</p></div></div><br>')
+                
+                map.addListener(map, 'idle', function() {
+                        map.trigger(map, 'resize');
+                });
+                
+                
+                var marker = new google.maps.Marker({
+                  position: {lat: parseFloat(v.latitude), lng: parseFloat(v.longitude)},
+                  map: map,
+                  title: 'test'
+                });
+              });
+          });
+        }
+        
+        
+        $(".nav-link").on("click", function() {
+          $(".screen").hide();
+          var target = $(this).attr("href");
+          $(target).show();
+        });
+        
+        $("#submitb").on("click", function() {
+          search();
+          $(".screen").hide();
+          var target = $(this).attr("href");
+          $(target).show();
+        });
+      });
+    </script>
+    
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYsBSy9gHWZ6FfXfpeTyd55Mob7k8D1YU&callback=initMap">
+    </script>
+    
+  </body>
+</html>
