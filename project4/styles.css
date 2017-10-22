@@ -1,0 +1,11 @@
+body {
+    background-color: #e5e5e5;
+    width: 99%;
+    text-align:center;
+    padding-top: 2%;
+}
+
+#myCanvas {
+    display: inline;
+    background-color: white;
+}
