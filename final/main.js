@@ -78,7 +78,7 @@ $(".nav-link").on("click", function() {
                 position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
                 map: map,
                 title: 'test',
-                icon: 'http://www.robotwoods.com/dev/misc/bluecircle.png'
+                icon: 'https://i.imgur.com/QkoGikZ.png'
             });
             
             db.locations.add({
